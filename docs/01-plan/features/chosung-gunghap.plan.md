@@ -631,27 +631,33 @@ score = clamp(score, 1, 99)           // 절대 0/100은 피함 (사용자 경�
 ```json
 {
   "dependencies": {
-    "@apps-in-toss/web-framework": "^2.0.0",
-    "@toss/tds-mobile": "latest",
-    "@toss/tds-mobile-ait": "latest",
-    "@toss/tds-colors": "latest",
-    "@emotion/react": "^11",
-    "react": "^18",
-    "react-dom": "^18",
+    "@apps-in-toss/web-framework": "^2.6.0",
+    "@toss/tds-mobile": "^2.3.0",
+    "@toss/tds-mobile-ait": "^2.3.0",
+    "@toss/tds-colors": "^0.1.0",
+    "@emotion/react": "^11.14.0",
+    "es-hangul": "^2.3.8",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "zustand": "^5.0.0"
   },
   "devDependencies": {
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "@vitejs/plugin-react": "^4",
-    "typescript": "^5",
-    "vite": "^5",
+    "@ait-co/devtools": "latest",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0",
     "vitest": "^2",
-    "eslint": "^9",
-    "prettier": "^3"
+    "eslint": "^9.21.0",
+    "prettier": "^3.4.2"
   }
 }
 ```
+
+> 추가된 패키지: **`es-hangul`** (한글 자모 분해, 토스 공식 라이브러리, 별 1,800) — **`@ait-co/devtools`** (브라우저에서 앱인토스 SDK 시뮬레이션, IAP까지 mock 가능)
+>
+> 설치 시 주의: `@ait-co/devtools`는 peer 충돌로 `--legacy-peer-deps` 플래그 필요
 
 ### 10.4 TDS Provider 설정 (필수)
 

@@ -111,12 +111,12 @@
   name1, name2 (string)
        │
        ▼
-[lib/hangul/validate] — 한글 검증
+[lib/hangul/validate] — 한글 검증 (es-hangul 활용)
        │
        ▼
 [lib/algorithm/compose] — 5차원 합산
-  ├─ stroke-count.compute()
-  ├─ ohaeng.compute()
+  ├─ stroke-count.compute()     (es-hangul.disassemble 사용)
+  ├─ ohaeng.compute()           (es-hangul.getChoseong 사용)
   ├─ yin-yang.compute()
   ├─ vowel-harmony.compute()
   └─ character-type.compute()
@@ -145,10 +145,10 @@ CompatibilityResult { totalScore, ohaengLabel, categories, scenario, ... }
 [ResultScreen] — 블러 해제 + 카드 생성
        │
        ▼
-[lib/canvas/generate-card] — 9:16 Canvas 렌더
+[lib/og/card-id] — 점수/오행으로 카드 ID 매칭
        │
-       ▼
-[SDK share-link] — 카톡/인스타 다이얼로그
+       ▼ (OG 이미지는 사전 호스팅된 정적 URL)
+[SDK getTossShareLink + share] — 딥링크 + OG 이미지 URL 묶음 공유
 ```
 
 ### 2.3 Dependencies
@@ -158,8 +158,8 @@ CompatibilityResult { totalScore, ohaengLabel, categories, scenario, ... }
 | features/* | store, lib/, content/, components/ | 화면 구성 |
 | store/app-store | lib/algorithm/compose, lib/iap/client | 결과 계산, 결제 트리거 |
 | lib/algorithm/compose | lib/hangul, lib/algorithm/* | 5차원 합산 |
-| lib/algorithm/* | lib/hangul/extract-jamo | 자모 분해 |
-| lib/canvas/generate-card | content/, types/ | 카드 렌더 |
+| lib/algorithm/* | lib/hangul/* (es-hangul wrapper) | 자모 분해 |
+| lib/og/card-id | content/, types/ | 점수→카드 ID 매핑 |
 | lib/iap/client | @apps-in-toss/web-framework | IAP 호출 |
 | components/* | @toss/tds-mobile* | TDS 래핑 |
 
