@@ -145,10 +145,11 @@ CompatibilityResult { totalScore, ohaengLabel, categories, scenario, ... }
 [ResultScreen] — 블러 해제 + 카드 생성
        │
        ▼
-[lib/og/card-id] — 점수/오행으로 카드 ID 매칭
+[lib/canvas/generate-card] — Canvas로 9:16 카드 동적 생성 (두 이름·점수·코멘트 포함)
        │
-       ▼ (OG 이미지는 사전 호스팅된 정적 URL)
-[SDK getTossShareLink + share] — 딥링크 + OG 이미지 URL 묶음 공유
+       ├─→ [download button] — canvas.toBlob() + a[download] 트리거 (사용자가 저장 후 인스타 등에 첨부)
+       │
+       └─→ [SDK share] — 텍스트 메시지 + 딥링크 (`share({message: 'X와 Y는 87점! →' + tossLink})`)
 ```
 
 ### 2.3 Dependencies
@@ -159,7 +160,7 @@ CompatibilityResult { totalScore, ohaengLabel, categories, scenario, ... }
 | store/app-store | lib/algorithm/compose, lib/iap/client | 결과 계산, 결제 트리거 |
 | lib/algorithm/compose | lib/hangul, lib/algorithm/* | 5차원 합산 |
 | lib/algorithm/* | lib/hangul/* (es-hangul wrapper) | 자모 분해 |
-| lib/og/card-id | content/, types/ | 점수→카드 ID 매핑 |
+| lib/canvas/generate-card | content/, types/ | 9:16 카드 동적 렌더 (두 이름 박힘) |
 | lib/iap/client | @apps-in-toss/web-framework | IAP 호출 |
 | components/* | @toss/tds-mobile* | TDS 래핑 |
 
