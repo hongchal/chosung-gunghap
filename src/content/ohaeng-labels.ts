@@ -8,6 +8,25 @@ export const OHAENG_DISPLAY: Record<Ohaeng, { name: string; emoji: string }> = {
   water: { name: "물", emoji: "💧" },
 };
 
+// 오행별 기운 묘사 (이름 기운 풀이용) — "왜 이 점수인지" 근거 제공
+const OHAENG_SPIRIT: Record<Ohaeng, { hanja: string; spirit: string }> = {
+  wood: { hanja: "木", spirit: "쭉쭉 뻗어 나가는 성장과 시작의" },
+  fire: { hanja: "火", spirit: "활활 타오르는 열정과 표현의" },
+  earth: { hanja: "土", spirit: "든든하게 품어주는 안정과 포용의" },
+  metal: { hanja: "金", spirit: "단단하고 야무진 결단과 정리의" },
+  water: { hanja: "水", spirit: "유연하게 흐르는 지혜와 적응의" },
+};
+
+/**
+ * 이름의 대표 오행 기운 풀이.
+ * 예: "조홍철님은 ⚙️ 금속(金) — 단단하고 야무진 결단과 정리의 기운이에요"
+ */
+export function buildSpiritText(name: string, ohaeng: Ohaeng): string {
+  const d = OHAENG_DISPLAY[ohaeng];
+  const s = OHAENG_SPIRIT[ohaeng];
+  return `${name}님은 ${d.emoji} ${d.name}(${s.hanja}) — ${s.spirit} 기운이에요.`;
+}
+
 // 상성별 관계 표현 (모두 긍정 톤 — 상극도 "끌리는"으로)
 export const RELATION_PHRASE: Record<OhaengRelation, string> = {
   sangsaeng: "서로 도와주는",

@@ -8,15 +8,23 @@ const R = 17; // 숫자 원 반지름
 
 interface Props {
   rows: number[][]; // getStrokePyramid 결과
+  syllables?: string[]; // 첫 줄 글자 라벨 (획수 배치와 동일 순서)
   onComplete: () => void;
   rowDelayMs?: number;
 }
+
+const LABEL_GAP = 26; // 글자 라벨이 차지하는 상단 높이
 
 /**
  * 사다리게임 스타일 획수 피라미드 애니메이션.
  * 위→아래로 한 줄씩 등장하며 인접 숫자가 사선으로 연결되어 합쳐짐.
  */
-export function PyramidLadder({ rows, onComplete, rowDelayMs = 500 }: Props) {
+export function PyramidLadder({
+  rows,
+  syllables,
+  onComplete,
+  rowDelayMs = 500,
+}: Props) {
   const [visible, setVisible] = useState(1);
 
   useEffect(() => {
@@ -35,20 +43,39 @@ export function PyramidLadder({ rows, onComplete, rowDelayMs = 500 }: Props) {
   if (rows.length === 0) return null;
 
   const maxLen = rows[0].length;
+  const hasLabels = syllables != null && syllables.length === maxLen;
+  const topPad = hasLabels ? LABEL_GAP : 0;
   const W = maxLen * CELL;
-  const H = rows.length * ROW_H;
+  const H = rows.length * ROW_H + topPad;
 
   const xPos = (rowLen: number, j: number) => {
     const offset = (W - rowLen * CELL) / 2;
     return offset + j * CELL + CELL / 2;
   };
-  const yPos = (i: number) => i * ROW_H + ROW_H / 2;
+  const yPos = (i: number) => i * ROW_H + ROW_H / 2 + topPad;
 
   const lastRowIdx = rows.length - 1;
 
   return (
     <div className={styles.wrap}>
       <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ maxWidth: W }}>
+        {/* 글자 라벨 (첫 줄 위) */}
+        {hasLabels &&
+          syllables.map((ch, j) => (
+            <text
+              key={`label-${j}`}
+              x={xPos(maxLen, j)}
+              y={LABEL_GAP / 2}
+              textAnchor="middle"
+              dominantBaseline="central"
+              fontSize={14}
+              fontWeight="bold"
+              fill={colors.grey700}
+            >
+              {ch}
+            </text>
+          ))}
+
         {/* 연결선 (사다리) */}
         {rows.slice(0, visible).map((row, i) => {
           if (i === 0) return null;

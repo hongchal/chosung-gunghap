@@ -13,6 +13,8 @@ export interface OhaengLabel {
   relation: OhaengRelation;
   label: string; // "🔥 불 × 💧 물 = 격렬한 케미"
   explanation: string; // 왜 이 케미인지 풀이 (1-2문장)
+  name1Spirit: string; // "조홍철님은 ⚙️ 금속(金) — ...기운이에요"
+  name2Spirit: string;
 }
 
 /** 사다리게임 시각화용 — 획수 피라미드의 모든 중간 단계 */

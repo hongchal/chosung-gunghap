@@ -2,7 +2,10 @@ import { useState } from "react";
 import { Top, Border, FixedBottomCTA } from "@toss/tds-mobile";
 import { colors } from "@toss/tds-colors";
 import { useAppStore } from "@/store/app-store";
-import { getStrokePyramid } from "@/lib/algorithm/stroke-count";
+import {
+  getStrokePyramid,
+  getInterleavedSyllables,
+} from "@/lib/algorithm/stroke-count";
 import { PyramidLadder } from "./PyramidLadder";
 import { ScoreReveal } from "./ScoreReveal";
 import { BlurOverlay } from "./BlurOverlay";
@@ -27,6 +30,7 @@ export function ResultScreen() {
   if (!result) return null;
 
   const pyramid = getStrokePyramid(result.name1, result.name2);
+  const syllables = getInterleavedSyllables(result.name1, result.name2);
   const isUnlocked = screen === "result-full";
   const revealed = phase === "revealed";
 
@@ -49,7 +53,11 @@ export function ResultScreen() {
         }
       />
 
-      <PyramidLadder rows={pyramid} onComplete={() => setPhase("revealed")} />
+      <PyramidLadder
+        rows={pyramid}
+        syllables={syllables}
+        onComplete={() => setPhase("revealed")}
+      />
 
       {revealed && (
         <div style={{ padding: "0 24px" }}>
@@ -58,9 +66,17 @@ export function ResultScreen() {
             {result.oneLineComment}
           </p>
 
-          {/* 오행 라벨 + 해설 (무료) */}
+          {/* 오행 라벨 + 기운 풀이 + 해설 (무료, "왜 이 점수인지" 근거) */}
           <div style={{ background: colors.greyBackground, borderRadius: 16, padding: 16, margin: "16px 0" }}>
             <p style={{ fontWeight: 700, fontSize: 16 }}>{result.ohaengLabel.label}</p>
+            <div style={{ margin: "10px 0", display: "flex", flexDirection: "column", gap: 4 }}>
+              <p style={{ color: colors.grey700, fontSize: 13, lineHeight: "19px" }}>
+                {result.ohaengLabel.name1Spirit}
+              </p>
+              <p style={{ color: colors.grey700, fontSize: 13, lineHeight: "19px" }}>
+                {result.ohaengLabel.name2Spirit}
+              </p>
+            </div>
             <p style={{ color: colors.grey600, fontSize: 14, marginTop: 6, lineHeight: "20px" }}>
               {result.ohaengLabel.explanation}
             </p>

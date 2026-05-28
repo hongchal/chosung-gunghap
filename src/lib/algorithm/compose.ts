@@ -17,6 +17,7 @@ import { computeCategoryScores } from "@/lib/algorithm/categories";
 import {
   buildOhaengLabelText,
   buildOhaengExplanation,
+  buildSpiritText,
 } from "@/content/ohaeng-labels";
 import { pickOneLiner } from "@/content/one-liners";
 import { buildScenario } from "@/content/scenarios";
@@ -41,6 +42,8 @@ function buildOhaengLabel(name1: string, name2: string): OhaengLabel {
     relation,
     label: buildOhaengLabelText(o1, o2, relation),
     explanation: buildOhaengExplanation(o1, o2, relation),
+    name1Spirit: buildSpiritText(name1, o1),
+    name2Spirit: buildSpiritText(name2, o2),
   };
 }
 

@@ -28,15 +28,23 @@ export function getSyllableStrokes(name: string): number[] {
   return [...name].map(syllableStrokes);
 }
 
-/** 두 이름의 획수를 한 칸씩 번갈아 배치한 첫 줄 */
-function interleave(s1: number[], s2: number[]): number[] {
-  const row: number[] = [];
-  const maxLen = Math.max(s1.length, s2.length);
+/** 두 배열을 한 칸씩 번갈아 합침 */
+function interleave<T>(a: T[], b: T[]): T[] {
+  const row: T[] = [];
+  const maxLen = Math.max(a.length, b.length);
   for (let i = 0; i < maxLen; i++) {
-    if (i < s1.length) row.push(s1[i]);
-    if (i < s2.length) row.push(s2[i]);
+    if (i < a.length) row.push(a[i]);
+    if (i < b.length) row.push(b[i]);
   }
   return row;
+}
+
+/**
+ * 사다리 맨 윗줄에 표시할 글자 배열 (획수 배치와 동일 순서).
+ * 예: ('조홍철','김수영') → ['조','김','홍','수','철','영']
+ */
+export function getInterleavedSyllables(name1: string, name2: string): string[] {
+  return interleave([...name1], [...name2]);
 }
 
 /**
