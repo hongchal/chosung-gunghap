@@ -71,23 +71,37 @@ export function ResultScreen() {
           {/* 유료 영역 */}
           <p style={{ fontWeight: 700, margin: "20px 0 12px" }}>둘만 아는 케미 포인트 👀</p>
           <BlurOverlay locked={!isUnlocked}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-              {Object.entries(result.categories).map(([key, value]) => (
-                <div
-                  key={key}
-                  style={{ background: colors.greyBackground, borderRadius: 12, padding: 16, textAlign: "center" }}
-                >
-                  <div style={{ fontSize: 13, color: colors.grey600 }}>
-                    {CATEGORY_LABELS[key]}
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {(["romance", "friendship", "chemistry", "daily"] as const).map(
+                (key) => (
+                  <div
+                    key={key}
+                    style={{ background: colors.greyBackground, borderRadius: 14, padding: 16 }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: 15, fontWeight: 700, color: colors.grey800 }}>
+                        {CATEGORY_LABELS[key]}
+                      </span>
+                      <span style={{ fontSize: 22, fontWeight: 800, color: colors.blue500 }}>
+                        {result.categories[key]}점
+                      </span>
+                    </div>
+                    <p style={{ fontSize: 14, color: colors.grey600, marginTop: 6, lineHeight: "20px" }}>
+                      {result.categoryComments[key]}
+                    </p>
                   </div>
-                  <div style={{ fontSize: 26, fontWeight: 800, color: colors.blue500 }}>
-                    {value}
-                  </div>
-                </div>
-              ))}
+                ),
+              )}
             </div>
-            <div style={{ background: colors.greyBackground, borderRadius: 12, padding: 16, marginTop: 12, fontSize: 15, lineHeight: "22px" }}>
-              {result.scenario}
+
+            {/* 관계 시나리오 */}
+            <div style={{ background: colors.blue50, borderRadius: 14, padding: 16, marginTop: 12 }}>
+              <p style={{ fontSize: 13, fontWeight: 700, color: colors.blue500, marginBottom: 6 }}>
+                두 사람의 관계는?
+              </p>
+              <p style={{ fontSize: 15, color: colors.grey700, lineHeight: "22px" }}>
+                {result.scenario}
+              </p>
             </div>
           </BlurOverlay>
 

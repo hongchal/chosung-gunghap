@@ -18,6 +18,11 @@ describe("algorithm/compose", () => {
     expect(result.categories.friendship).toBeDefined();
     expect(result.categories.chemistry).toBeDefined();
     expect(result.categories.daily).toBeDefined();
+    // 분야별 해설 모두 채워짐
+    expect(result.categoryComments.romance.length).toBeGreaterThan(0);
+    expect(result.categoryComments.friendship.length).toBeGreaterThan(0);
+    expect(result.categoryComments.chemistry.length).toBeGreaterThan(0);
+    expect(result.categoryComments.daily.length).toBeGreaterThan(0);
     expect(result.scenario).toContain("홍길동");
     expect(result.scenario).toContain("김민지");
     expect(result.dimensions.stroke).toBeDefined();

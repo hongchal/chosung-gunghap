@@ -20,6 +20,7 @@ import {
 } from "@/content/ohaeng-labels";
 import { pickOneLiner } from "@/content/one-liners";
 import { buildScenario } from "@/content/scenarios";
+import { pickCategoryComment } from "@/content/category-comments";
 
 /** 두 이름으로 결정론적 seed 생성 (콘텐츠 후보 선택용) */
 function makeSeed(name1: string, name2: string): number {
@@ -69,6 +70,7 @@ export function computeCompatibility(
   const seed = makeSeed(name1, name2);
   const char1 = classifyCharacter(name1);
   const char2 = classifyCharacter(name2);
+  const categories = computeCategoryScores(dimensions);
 
   return {
     name1,
@@ -76,7 +78,13 @@ export function computeCompatibility(
     totalScore,
     oneLineComment: pickOneLiner(totalScore, ohaengLabel.relation, seed),
     ohaengLabel,
-    categories: computeCategoryScores(dimensions),
+    categories,
+    categoryComments: {
+      romance: pickCategoryComment("romance", categories.romance),
+      friendship: pickCategoryComment("friendship", categories.friendship),
+      chemistry: pickCategoryComment("chemistry", categories.chemistry),
+      daily: pickCategoryComment("daily", categories.daily),
+    },
     scenario: buildScenario(name1, name2, totalScore, char1, char2, seed),
     characters: {
       name1Type: char1,

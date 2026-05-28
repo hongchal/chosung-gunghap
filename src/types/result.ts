@@ -33,6 +33,12 @@ export interface CompatibilityResult {
   oneLineComment: string;
   ohaengLabel: OhaengLabel;
   categories: CategoryScores;
+  categoryComments: {
+    romance: string;
+    friendship: string;
+    chemistry: string;
+    daily: string;
+  };
   scenario: string;
   characters: CharacterPair;
   dimensions: DimensionScores;
