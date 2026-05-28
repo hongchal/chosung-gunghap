@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   computeStrokeScore,
   getSyllableStrokes,
+  getStrokePyramid,
   syllableStrokes,
 } from "./stroke-count";
 
@@ -54,5 +55,25 @@ describe("algorithm/stroke-count (획수 피라미드법)", () => {
     const ab = computeStrokeScore("가나", "다라");
     expect(ab).toBeGreaterThanOrEqual(1);
     expect(ab).toBeLessThanOrEqual(100);
+  });
+
+  // 사다리게임 시각화용 피라미드 단계
+  it("getStrokePyramid: 김철수♥이영희 첫 줄 = 번갈아 배치 [7,2,11,5,4,5]", () => {
+    const rows = getStrokePyramid("김철수", "이영희");
+    expect(rows[0]).toEqual([7, 2, 11, 5, 4, 5]);
+  });
+
+  it("getStrokePyramid: 마지막 줄은 2개, 점수와 일치", () => {
+    const rows = getStrokePyramid("김철수", "이영희");
+    const last = rows[rows.length - 1];
+    expect(last).toEqual([5, 7]);
+    expect(last[0] * 10 + last[1]).toBe(57);
+  });
+
+  it("getStrokePyramid: 각 줄은 직전 줄보다 1개씩 짧아짐", () => {
+    const rows = getStrokePyramid("홍길동", "김민지");
+    for (let i = 1; i < rows.length; i++) {
+      expect(rows[i].length).toBe(rows[i - 1].length - 1);
+    }
   });
 });

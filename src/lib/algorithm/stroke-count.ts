@@ -28,6 +28,50 @@ export function getSyllableStrokes(name: string): number[] {
   return [...name].map(syllableStrokes);
 }
 
+/** 두 이름의 획수를 한 칸씩 번갈아 배치한 첫 줄 */
+function interleave(s1: number[], s2: number[]): number[] {
+  const row: number[] = [];
+  const maxLen = Math.max(s1.length, s2.length);
+  for (let i = 0; i < maxLen; i++) {
+    if (i < s1.length) row.push(s1[i]);
+    if (i < s2.length) row.push(s2[i]);
+  }
+  return row;
+}
+
+/**
+ * 획수 피라미드의 모든 중간 단계를 반환 (사다리게임 애니메이션용).
+ * 예: 김철수♥이영희 → [[7,2,11,5,4,5],[9,3,6,9,9],[2,9,5,8],[1,4,3],[5,7]]
+ */
+export function getStrokePyramid(name1: string, name2: string): number[][] {
+  const s1 = getSyllableStrokes(name1);
+  const s2 = getSyllableStrokes(name2);
+  if (s1.length === 0 || s2.length === 0) return [];
+
+  const rows: number[][] = [interleave(s1, s2)];
+  let row = rows[0];
+  while (row.length > 2) {
+    const next: number[] = [];
+    for (let i = 0; i < row.length - 1; i++) {
+      next.push((row[i] + row[i + 1]) % 10);
+    }
+    rows.push(next);
+    row = next;
+  }
+  return rows;
+}
+
+/** 피라미드 마지막 줄 → 점수 (1-100, 00은 100으로 변환) */
+function pyramidToScore(rows: number[][]): number {
+  if (rows.length === 0) return 50;
+  const last = rows[rows.length - 1];
+  if (last.length === 1) {
+    return last[0] === 0 ? 100 : last[0] * 11;
+  }
+  const score = last[0] * 10 + last[1];
+  return score === 0 ? 100 : score;
+}
+
 /**
  * 이름 궁합 — 획수 피라미드법 (일반 대중이 아는 표준 방식).
  *
@@ -42,32 +86,5 @@ export function getSyllableStrokes(name: string): number[] {
  * @returns 1-100 (피라미드 결과; 0은 100으로 변환)
  */
 export function computeStrokeScore(name1: string, name2: string): number {
-  const s1 = getSyllableStrokes(name1);
-  const s2 = getSyllableStrokes(name2);
-
-  if (s1.length === 0 || s2.length === 0) return 50;
-
-  // 번갈아 배치 (name1 첫 글자부터)
-  let row: number[] = [];
-  const maxLen = Math.max(s1.length, s2.length);
-  for (let i = 0; i < maxLen; i++) {
-    if (i < s1.length) row.push(s1[i]);
-    if (i < s2.length) row.push(s2[i]);
-  }
-
-  // 피라미드 축약 (2개 남을 때까지)
-  while (row.length > 2) {
-    const next: number[] = [];
-    for (let i = 0; i < row.length - 1; i++) {
-      next.push((row[i] + row[i + 1]) % 10);
-    }
-    row = next;
-  }
-
-  // 최종 점수
-  if (row.length === 1) {
-    return row[0] === 0 ? 100 : row[0] * 11;
-  }
-  const score = row[0] * 10 + row[1];
-  return score === 0 ? 100 : score;
+  return pyramidToScore(getStrokePyramid(name1, name2));
 }

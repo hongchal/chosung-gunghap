@@ -13,6 +13,9 @@ function ResultPlaceholder() {
       <p style={{ fontSize: 48, fontWeight: "bold" }}>{result?.totalScore}점</p>
       <p>{result?.oneLineComment}</p>
       <p>{result?.ohaengLabel.label}</p>
+      <p style={{ color: "#666", fontSize: 14 }}>
+        {result?.ohaengLabel.explanation}
+      </p>
       <button onClick={reset}>다시하기</button>
       <p style={{ color: "#999", fontSize: 13 }}>
         (결과 화면은 Module-5에서 TDS 디자인으로 완성됩니다)

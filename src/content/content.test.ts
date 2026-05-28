@@ -1,7 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { pickOneLiner } from "./one-liners";
 import { buildScenario } from "./scenarios";
-import { buildOhaengLabelText, OHAENG_DISPLAY } from "./ohaeng-labels";
+import {
+  buildOhaengLabelText,
+  buildOhaengExplanation,
+  OHAENG_DISPLAY,
+} from "./ohaeng-labels";
 import { CHARACTER_TRAITS } from "./character-traits";
 import type { Ohaeng, OhaengRelation } from "@/types/algorithm";
 
@@ -87,6 +91,26 @@ describe("content/ohaeng-labels", () => {
     expect(label).toContain("케미");
     expect(label).toContain("불");
     expect(label).toContain("물");
+  });
+
+  it("buildOhaengExplanation: 모든 오행 쌍에서 빈 문자열 없음 + 긍정 톤", () => {
+    const relationOf = (a: Ohaeng, b: Ohaeng): OhaengRelation => {
+      // 테스트용 간이 — 실제 관계는 ohaeng.ts에서 판정, 여기선 해설 존재만 확인
+      return a === b ? "neutral" : "sangsaeng";
+    };
+    for (const a of OHAENGS) {
+      for (const b of OHAENGS) {
+        const exp = buildOhaengExplanation(a, b, relationOf(a, b));
+        expect(exp.length).toBeGreaterThan(0);
+        expect(NEGATIVE_WORDS.some((w) => exp.includes(w))).toBe(false);
+      }
+    }
+  });
+
+  it("buildOhaengExplanation: 방향 무관 (a-b = b-a)", () => {
+    expect(buildOhaengExplanation("metal", "wood", "sangkuk")).toBe(
+      buildOhaengExplanation("wood", "metal", "sangkuk"),
+    );
   });
 });
 

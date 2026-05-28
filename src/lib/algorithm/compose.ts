@@ -14,7 +14,10 @@ import {
   computeCharacterBonus,
 } from "@/lib/algorithm/character-type";
 import { computeCategoryScores } from "@/lib/algorithm/categories";
-import { buildOhaengLabelText } from "@/content/ohaeng-labels";
+import {
+  buildOhaengLabelText,
+  buildOhaengExplanation,
+} from "@/content/ohaeng-labels";
 import { pickOneLiner } from "@/content/one-liners";
 import { buildScenario } from "@/content/scenarios";
 
@@ -36,6 +39,7 @@ function buildOhaengLabel(name1: string, name2: string): OhaengLabel {
     name2Ohaeng: o2,
     relation,
     label: buildOhaengLabelText(o1, o2, relation),
+    explanation: buildOhaengExplanation(o1, o2, relation),
   };
 }
 
