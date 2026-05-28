@@ -9,6 +9,7 @@ import {
 import { PyramidLadder } from "./PyramidLadder";
 import { ScoreReveal } from "./ScoreReveal";
 import { Disclaimer } from "@/components/Disclaimer";
+import { useShare } from "@/features/share/useShare";
 
 const CATEGORY_LABELS: Record<string, string> = {
   romance: "연애",
@@ -22,7 +23,7 @@ export function ResultScreen() {
   const screen = useAppStore((s) => s.screen);
   const payment = useAppStore((s) => s.payment);
   const startPayment = useAppStore((s) => s.startPayment);
-  const reset = useAppStore((s) => s.reset);
+  const { shareResult, sharing } = useShare();
 
   const [phase, setPhase] = useState<"ladder" | "revealed">("ladder");
 
@@ -35,10 +36,9 @@ export function ResultScreen() {
 
   const handleCTA = () => {
     if (isUnlocked) {
-      // TODO Module-6: 공유 카드 생성 + 공유 다이얼로그
-      reset();
+      void shareResult(); // 결제 완료 → 카드 생성 + 공유
     } else {
-      void startPayment();
+      void startPayment(); // 미결제 → 500원 결제 게이트
     }
   };
 
@@ -127,7 +127,7 @@ export function ResultScreen() {
       {revealed && (
         <FixedBottomCTA
           onClick={handleCTA}
-          loading={payment.status === "pending"}
+          loading={payment.status === "pending" || sharing}
         >
           {isUnlocked ? "친구에게 공유하기" : "공유하기 · ₩500"}
         </FixedBottomCTA>
