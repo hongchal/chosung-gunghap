@@ -14,6 +14,9 @@ import {
   computeCharacterBonus,
 } from "@/lib/algorithm/character-type";
 import { computeCategoryScores } from "@/lib/algorithm/categories";
+import { buildOhaengLabelText } from "@/content/ohaeng-labels";
+import { pickOneLiner } from "@/content/one-liners";
+import { buildScenario } from "@/content/scenarios";
 
 // 5차원 종합 점수 가중치 (합 = 1.0)
 const TOTAL_WEIGHTS = {
@@ -24,55 +27,25 @@ const TOTAL_WEIGHTS = {
   characterBonus: 0.05, // characterBonus는 -10~+10이라 ×10으로 normalize
 } as const;
 
-const OHAENG_DISPLAY: Record<string, string> = {
-  wood: "🌳 나무",
-  fire: "🔥 불",
-  earth: "⛰️ 흙",
-  metal: "⚙️ 금속",
-  water: "💧 물",
-};
+/** 두 이름으로 결정론적 seed 생성 (콘텐츠 후보 선택용) */
+function makeSeed(name1: string, name2: string): number {
+  let seed = 0;
+  for (const ch of name1 + name2) {
+    seed = (seed * 31 + ch.charCodeAt(0)) % 1_000_000;
+  }
+  return seed;
+}
 
 function buildOhaengLabel(name1: string, name2: string): OhaengLabel {
   const o1 = getFirstOhaeng(name1);
   const o2 = getFirstOhaeng(name2);
   const relation = getOhaengRelation(o1, o2);
-  const relationText =
-    relation === "sangsaeng"
-      ? "서로 도와주는"
-      : relation === "sangkuk"
-        ? "격렬하게 끌리는"
-        : "닮은 듯 다른";
-
   return {
     name1Ohaeng: o1,
     name2Ohaeng: o2,
     relation,
-    label: `${OHAENG_DISPLAY[o1]} × ${OHAENG_DISPLAY[o2]} = ${relationText} 케미`,
+    label: buildOhaengLabelText(o1, o2, relation),
   };
-}
-
-// MVP placeholder. Module-2에서 content/one-liners.ts로 풍부하게 대체.
-function pickOneLineComment(score: number, relation: string): string {
-  if (score >= 90) {
-    return relation === "sangsaeng" ? "운명적 케미!" : "예측불가의 환상 케미!";
-  }
-  if (score >= 70) {
-    return relation === "sangsaeng" ? "은근히 깊은 케미" : "불꽃 튀는 케미!";
-  }
-  if (score >= 50) return "익숙한 듯 새로운 케미";
-  if (score >= 30) return "정반대의 매력";
-  return "의외의 반전 케미";
-}
-
-// MVP placeholder. Module-2에서 content/scenarios.ts로 풍부하게 대체.
-function buildScenario(name1: string, name2: string, score: number): string {
-  const tone =
-    score >= 70
-      ? "따뜻하게 어우러져요"
-      : score >= 40
-        ? "서로의 다름을 통해 성장해요"
-        : "오히려 흥미진진한 관계가 돼요";
-  return `${name1}님과 ${name2}님은 ${tone}. 처음엔 낯설어도 시간이 흐를수록 서로를 더 잘 알게 되는 사이예요.`;
 }
 
 /**
@@ -103,18 +76,21 @@ export function computeCompatibility(
 
   const totalScore = Math.max(1, Math.min(99, Math.round(weighted)));
   const ohaengLabel = buildOhaengLabel(name1, name2);
+  const seed = makeSeed(name1, name2);
+  const char1 = classifyCharacter(name1);
+  const char2 = classifyCharacter(name2);
 
   return {
     name1,
     name2,
     totalScore,
-    oneLineComment: pickOneLineComment(totalScore, ohaengLabel.relation),
+    oneLineComment: pickOneLiner(totalScore, ohaengLabel.relation, seed),
     ohaengLabel,
     categories: computeCategoryScores(dimensions),
-    scenario: buildScenario(name1, name2, totalScore),
+    scenario: buildScenario(name1, name2, totalScore, char1, char2, seed),
     characters: {
-      name1Type: classifyCharacter(name1),
-      name2Type: classifyCharacter(name2),
+      name1Type: char1,
+      name2Type: char2,
     },
     dimensions,
     algorithmVersion: ALGORITHM_VERSION,
