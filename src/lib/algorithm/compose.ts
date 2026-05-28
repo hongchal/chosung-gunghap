@@ -18,15 +18,6 @@ import { buildOhaengLabelText } from "@/content/ohaeng-labels";
 import { pickOneLiner } from "@/content/one-liners";
 import { buildScenario } from "@/content/scenarios";
 
-// 5차원 종합 점수 가중치 (합 = 1.0)
-const TOTAL_WEIGHTS = {
-  stroke: 0.5,
-  ohaeng: 0.25,
-  yinYang: 0.1,
-  vowel: 0.1,
-  characterBonus: 0.05, // characterBonus는 -10~+10이라 ×10으로 normalize
-} as const;
-
 /** 두 이름으로 결정론적 seed 생성 (콘텐츠 후보 선택용) */
 function makeSeed(name1: string, name2: string): number {
   let seed = 0;
@@ -59,22 +50,17 @@ export function computeCompatibility(
   validateHangul(name1);
   validateHangul(name2);
 
+  // 메인 종합 점수 = 획수 피라미드법 (일반 대중이 아는 표준 이름궁합 방식, D-18)
+  const totalScore = computeStrokeScore(name1, name2);
+
+  // 부가 분석 차원 — 오행/음양/모음/캐릭터는 분야별 점수·라벨·시나리오에만 활용 (종합점수 미반영)
   const dimensions: DimensionScores = {
-    stroke: computeStrokeScore(name1, name2),
+    stroke: totalScore,
     ohaeng: computeOhaengScore(name1, name2),
     yinYang: computeYinYangScore(name1, name2),
     vowel: computeVowelHarmonyScore(name1, name2),
     characterBonus: computeCharacterBonus(name1, name2),
   };
-
-  const weighted =
-    TOTAL_WEIGHTS.stroke * dimensions.stroke +
-    TOTAL_WEIGHTS.ohaeng * dimensions.ohaeng +
-    TOTAL_WEIGHTS.yinYang * dimensions.yinYang +
-    TOTAL_WEIGHTS.vowel * dimensions.vowel +
-    TOTAL_WEIGHTS.characterBonus * (dimensions.characterBonus * 10);
-
-  const totalScore = Math.max(1, Math.min(99, Math.round(weighted)));
   const ohaengLabel = buildOhaengLabel(name1, name2);
   const seed = makeSeed(name1, name2);
   const char1 = classifyCharacter(name1);

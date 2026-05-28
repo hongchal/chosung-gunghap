@@ -11,7 +11,7 @@ describe("algorithm/compose", () => {
     expect(result.name1).toBe("홍길동");
     expect(result.name2).toBe("김민지");
     expect(result.totalScore).toBeGreaterThanOrEqual(1);
-    expect(result.totalScore).toBeLessThanOrEqual(99);
+    expect(result.totalScore).toBeLessThanOrEqual(100);
     expect(result.oneLineComment).toBeTruthy();
     expect(result.ohaengLabel.label).toContain("케미");
     expect(result.categories.romance).toBeDefined();
@@ -46,8 +46,8 @@ describe("algorithm/compose", () => {
     );
   });
 
-  // L1-7: clamp 1-99 (절대 0/100 회피)
-  it("computeCompatibility: 다양한 입력에서 totalScore 절대 0/100 아님", () => {
+  // 피라미드법 점수 범위 (1-100, 00은 100%로 변환)
+  it("computeCompatibility: 다양한 입력에서 totalScore 1-100", () => {
     const samples: [string, string][] = [
       ["가", "나"],
       ["홍길동", "김민지"],
@@ -58,9 +58,14 @@ describe("algorithm/compose", () => {
     ];
     for (const [a, b] of samples) {
       const { totalScore } = computeCompatibility(a, b);
-      expect(totalScore).toBeGreaterThan(0);
-      expect(totalScore).toBeLessThan(100);
+      expect(totalScore).toBeGreaterThanOrEqual(1);
+      expect(totalScore).toBeLessThanOrEqual(100);
     }
+  });
+
+  // 표준 피라미드법 검증 — 종합점수가 stroke-count 결과와 일치
+  it("computeCompatibility: totalScore = 획수 피라미드법 결과 (김철수♥이영희=57)", () => {
+    expect(computeCompatibility("김철수", "이영희").totalScore).toBe(57);
   });
 
   // L1-6: 가중치 적용 검증 (방향성 체크)
